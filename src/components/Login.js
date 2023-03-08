@@ -10,23 +10,9 @@ import {
   Image,
 } from "react-native";
 import validator from "validator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Register from "./Register";
-
-import {
-  auth,
-  signInWithEmailAndPassword,
-  database,
-  databaseRef,
-  databaseGet,
-  databaseChild,
-} from "../../firebase";
 
 const Login_user = (props) => {
   const { navigation } = props;
-
-  //   const { setUser } = useContext(Context);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -65,38 +51,6 @@ const Login_user = (props) => {
     return snapshot.val();
   };
 
-  //   const loginCometChat = async (id) => {
-  //     if (!id) {
-  //       return;
-  //     }
-  //     try {
-  //       const user = await CometChat.login(
-  //         id,
-  //         `${cometChatConfig.cometChatAuthKey}`
-  //       );
-  //       if (user) {
-  //         const authenticatedUser = await getUser(id);
-  //         if (authenticatedUser) {
-  //           AsyncStorage.setItem("auth", JSON.stringify(authenticatedUser));
-  //           setUser(authenticatedUser);
-  //           navigation.navigate("Home");
-  //         } else {
-  //           setIsLoading(false);
-  //           showMessage(
-  //             "Info",
-  //             "Cannot load the authenticated information, please try again"
-  //           );
-  //         }
-  //       } else {
-  //         setIsLoading(false);
-  //         showMessage("Error", "Your username or password is not correct");
-  //       }
-  //     } catch (error) {
-  //       setIsLoading(false);
-  //       showMessage("Error", "Your username or password is not correct");
-  //     }
-  //   };
-
   const login = async () => {
     if (isUserCredentialsValid(email, password)) {
       setIsLoading(true);
@@ -106,10 +60,6 @@ const Login_user = (props) => {
           email,
           password
         );
-        if (userCredential) {
-          const userId = userCredential.user.uid;
-          //   await loginCometChat(userId);
-        }
       } catch (error) {
         setIsLoading(false);
         showMessage("Error", "Your username or password is not correct");

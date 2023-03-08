@@ -12,18 +12,6 @@ import {
 } from "react-native";
 import validator from "validator";
 
-import {
-  auth,
-  createUserWithEmailAndPassword,
-  storage,
-  storageRef,
-  uploadBytesResumable,
-  getDownloadURL,
-  database,
-  databaseRef,
-  databaseSet,
-} from "../../firebase";
-
 const SignUp = () => {
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
@@ -87,27 +75,6 @@ const SignUp = () => {
         email,
         password
       );
-      if (userCredential) {
-        const userId = userCredential._tokenResponse.localId;
-        const createdAccount = { id: userId, fullname, email };
-        databaseSet(databaseRef(database, "users/" + userId), createdAccount);
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {},
-          async () => {
-            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            if (downloadUrl) {
-              databaseSet(
-                databaseRef(database, "users/" + userId),
-                createdAccount
-              );
-            }
-          }
-        );
-      } else {
-        setIsLoading(false);
-        showMessage("Error", "Fail to create your account");
-      }
     }
   };
 

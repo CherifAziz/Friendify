@@ -1,0 +1,30 @@
+POST http://localhost:8080/addUser
+content-type: application/json
+
+{
+    "name": "Rishu Gupta",
+    "roll": "2517045",
+    "email":"abc@gmail.com"
+}
+
+###
+POST http://localhost:8080/demoUser
+content-type: application/json
+
+{
+    "name": "Shyam",
+    "roll": "251554",
+    "email":"shyam@gmail.com"
+}
+
+###
+
+GET http://localhost:8080/getUsers
+
+###
+POST http://localhost:8080/getOneUser
+content-type: application/json
+
+{
+    "roll": "2517045"
+}
