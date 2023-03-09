@@ -39,30 +39,26 @@ const Login_user = (props) => {
     Alert.alert(title, message);
   };
 
-  const getUser = async (id) => {
-    if (!id) {
-      return null;
-    }
-    const ref = databaseRef(database);
-    const snapshot = await databaseGet(databaseChild(ref, `users/${id}`));
-    if (!snapshot || !snapshot.exists()) {
-      return null;
-    }
-    return snapshot.val();
-  };
-
   const login = async () => {
     if (isUserCredentialsValid(email, password)) {
       setIsLoading(true);
       try {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        const res = await fetch("http://192.168.1.19:8080/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        });
+        const response = await res.json();
+        if (response.user === null)
+          showMessage("Error", "Your username or password is not correct");
+        else navigation.navigate("Home");
       } catch (error) {
-        setIsLoading(false);
-        showMessage("Error", "Your username or password is not correct");
+        throw new Error("Issue with Register", error.message);
       }
     } else {
       setIsLoading(false);
@@ -85,7 +81,7 @@ const Login_user = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image source={require("../../assets/logo1.png")} />
+        <Image source={require("../assets/logo1.png")} />
       </View>
       <TextInput
         autoCapitalize="none"

@@ -3,9 +3,21 @@ content-type: application/json
 
 {
     "name": "Rishu Gupta",
-    "roll": "2517045",
-    "email":"abc@gmail.com"
+    "email":"shyam@gmail.com",
+    "password": "test12345"
 }
+
+###
+
+POST http://localhost:8080/addUser
+content-type: application/json
+
+{
+    "name": "test",
+    "email":"test@gmail.com",
+    "password": "test12345"
+}
+
 
 ###
 POST http://localhost:8080/demoUser
@@ -26,5 +38,5 @@ POST http://localhost:8080/getOneUser
 content-type: application/json
 
 {
-    "roll": "2517045"
+    "email": "shayam@gmail.com"
 }

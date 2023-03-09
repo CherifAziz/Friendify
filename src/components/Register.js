@@ -12,7 +12,8 @@ import {
 } from "react-native";
 import validator from "validator";
 
-const SignUp = () => {
+const SignUp = (props) => {
+  const { navigation } = props;
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,13 +69,42 @@ const SignUp = () => {
   };
 
   const register = async () => {
-    if (isSignupValid({ fullname, email, password, confirmPassword })) {
-      setIsLoading(true);
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+    // if (isSignupValid({ fullname, email, password, confirmPassword })) {
+    //   setIsLoading(true);
+    try {
+      console.log(fullname);
+      console.log(email);
+      console.log(password);
+      const res = await fetch("http://192.168.1.19:8080/addUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: fullname,
+          email: email,
+          password: password,
+        }),
+      });
+      const response = await res.json();
+      console.log("response:", response);
+      if (response.msg === "Something went wrong")
+        showMessage("Error", response.error);
+      else navigation.navigate("Home");
+    } catch (error) {
+      console.error("Issue with Register", error);
+      throw new Error("Issue with Register", error.msg);
+    }
+    // }
+  };
+
+  const handleRegister = async () => {
+    try {
+      await register();
+    } catch (error) {
+      console.error("Unhandled promise rejection:", error);
+      // Affichez ici un message d'erreur à l'utilisateur ou
+      // traitez l'erreur d'une autre manière si nécessaire
     }
   };
 
@@ -118,7 +148,7 @@ const SignUp = () => {
         secureTextEntry
         style={styles.input}
       />
-      <TouchableOpacity style={styles.register} onPress={register}>
+      <TouchableOpacity style={styles.register} onPress={handleRegister}>
         <Text style={styles.registerLabel}>Register</Text>
       </TouchableOpacity>
     </View>

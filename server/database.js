@@ -11,27 +11,42 @@ admin.initializeApp({
 var db = admin.database();
 var userRef = db.ref("users");
 
+function encodeUserEmail(userEmail) {
+  return userEmail.replace(".", ",");
+}
+
+function decodeUserEmail(userEmail) {
+  return userEmail.replace(",", ".");
+}
+
 const userOperation = {
   addUser(obj, res) {
-    var oneUser = userRef.child(obj.roll);
-    oneUser.update(obj, (err) => {
-      if (err) {
-        res.status(300).json({ msg: "Something went wrong", error: err });
-      } else {
-        res.status(200).json({ msg: "user created sucessfully" });
-      }
-    });
-  },
-  demoUser(obj, res) {
-    var userRefdemo = db.ref("demousers");
-    var oneUser = userRefdemo.child(obj.roll);
-    oneUser.push(obj, (err) => {
-      if (err) {
-        res.status(300).json({ msg: "Something went wrong", error: err });
-      } else {
-        res.status(200).json({ msg: "user created sucessfully" });
-      }
-    });
+    const usersRef = admin.database().ref("users");
+    var oneUser = userRef.child(encodeUserEmail(obj.email));
+    usersRef
+      .orderByChild("email")
+      .equalTo(obj.email)
+      .once("value")
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log("User exists");
+          res.status(300).json({
+            msg: "Something went wrong",
+            error: "User already exists",
+          });
+        } else {
+          oneUser.update(obj, (err) => {
+            if (err) {
+              res.status(300).json({ msg: "Something went wrong", error: err });
+            } else {
+              res.status(200).json({ msg: "user created sucessfully" });
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   },
   getUsers(res) {
     userRef.once("value", function (snap) {
@@ -40,7 +55,7 @@ const userOperation = {
   },
   getOneUser(obj, res) {
     var userRefdemo = db.ref("users");
-    var oneUser = userRefdemo.child(obj.roll);
+    var oneUser = userRefdemo.child(encodeUserEmail(obj.email));
     oneUser.once("value", function (snap) {
       res.status(200).json({ user: snap.val() });
     });
